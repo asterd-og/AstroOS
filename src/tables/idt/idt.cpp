@@ -1,11 +1,49 @@
 #include <tables/idt/idt.h>
 #include <lib/printf.h>
+#include <sys/pic.h>
 
 namespace Idt {
+    static const char *messages[32] = {
+        "Division by zero",
+        "Debug",
+        "Non-maskable interrupt",
+        "Breakpoint",
+        "Detected overflow",
+        "Out-of-bounds",
+        "Invalid opcode",
+        "No coprocessor",
+        "Double fault",
+        "Coprocessor segment overrun",
+        "Bad TSS",
+        "Segment not present",
+        "Stack fault",
+        "General protection fault",
+        "Page fault",
+        "Unknown interrupt",
+        "Coprocessor fault",
+        "Alignment check",
+        "Machine check",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+        "Reserved",
+    };
+
     extern "C" void* intVector[];
 
     __attribute__((aligned(0x10))) 
     static IdtEntry idt[256];
+
+    handler handlers[16];
 
     void init() {
 		__asm__ volatile ("cli");
@@ -15,10 +53,11 @@ namespace Idt {
             .limit = (uint16_t)sizeof(IdtEntry) * 256 - 1
         };
 
-        for (uint8_t idx = 0; idx < 255; idx++)
+        for (uint8_t idx = 0; idx < 47; idx++)
             setDesc(idx, intVector[idx]);
         
         __asm__ volatile("lidt %0" : : "m"(idtr));
+        Pic::init();
         __asm__ volatile("sti");
     }
 	
@@ -34,10 +73,15 @@ namespace Idt {
         entry->reserved = 0;
     }
 
+    void installHandler(uint8_t idx, handler hand) {
+        handlers[idx] = hand;
+    }
+
     extern "C" void intHandler(Registers* regs) {
         if (regs->intNo < 32) {
             __asm__ volatile("cli");
-            printf("exception has occurred!\n");
+
+            printf("exception has occurred!\n%s\n\n", messages[regs->intNo]);
 	        printf("dump:\n");
 	        printf("sizeof: %lu\n", sizeof(*regs));
 	        printf("rax=%016lX rbx=%016lX rcx=%016lX rdx=%016lX\n", regs->rax, regs->rbx, regs->rcx, regs->rdx);
@@ -51,6 +95,10 @@ namespace Idt {
 
             for (;;) __asm__ volatile("hlt");
         } else {
+            if ((uintptr_t*)handlers[regs->intNo - 32] != nullptr) {
+                handlers[regs->intNo - 32](regs);
+            }
+            Pic::eoi(regs->intNo - 32);
         }
     }
 }
