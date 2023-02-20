@@ -19,7 +19,7 @@ void Framebuffer::init(int framebufferIdx) {
 	this->size = this->width * this->height * 4;
 
 	this->address = (uint32_t*)fb->address;
-	this->backAddress = (uint32_t*)Pmm::alloc((1024 * 768) / pageSize);
+	this->backAddress = (uint32_t*)Pmm::alloc((this->width * this->height) / pageSize);
 
 	memset(this->backAddress, 0x0, this->size);
 }
