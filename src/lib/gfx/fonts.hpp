@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <lib/gfx/font_data.h>
+#include <lib/gfx/font_data.hpp>
 
 typedef struct
 {

@@ -1,13 +1,13 @@
-#include <kernel/kernel.h>
-#include <tables/gdt/gdt.h>
-#include <tables/idt/idt.h>
-#include <video/terminal.h>
+#include <kernel/kernel.hpp>
+#include <tables/gdt/gdt.hpp>
+#include <tables/idt/idt.hpp>
+#include <video/terminal.hpp>
 #include <lib/printf.h>
-#include <memory/pmm.h>
-#include <lib/string.h>
-#include <sys/pit.h>
-#include <video/framebuffer.h>
-#include <sys/ps2/keyboard.h>
+#include <memory/pmm.hpp>
+#include <lib/string.hpp>
+#include <sys/pit.hpp>
+#include <video/framebuffer.hpp>
+#include <sys/ps2/keyboard.hpp>
 
 static volatile struct limine_hhdm_request hhdmReq = {
     .id = LIMINE_HHDM_REQUEST,

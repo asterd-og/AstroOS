@@ -1,6 +1,6 @@
-#include <memory/pmm.h>
-#include <kernel/kernel.h>
-#include <lib/string.h>
+#include <memory/pmm.hpp>
+#include <kernel/kernel.hpp>
+#include <lib/string.hpp>
 #include <lib/printf.h>
 
 namespace Pmm {

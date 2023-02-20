@@ -1,4 +1,4 @@
-#include <tables/gdt/gdt.h>
+#include <tables/gdt/gdt.hpp>
 
 namespace Gdt {
     uint64_t data[9] = {

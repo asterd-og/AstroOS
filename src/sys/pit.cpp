@@ -1,6 +1,6 @@
-#include <sys/pit.h>
-#include <tables/idt/idt.h>
-#include <lib/ports.h>
+#include <sys/pit.hpp>
+#include <tables/idt/idt.hpp>
+#include <lib/ports.hpp>
 #include <lib/printf.h>
 
 namespace Pit {

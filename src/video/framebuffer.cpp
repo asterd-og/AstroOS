@@ -1,8 +1,8 @@
-#include <video/framebuffer.h>
+#include <video/framebuffer.hpp>
 #include <kernel/limine.h>
-#include <kernel/kernel.h>
-#include <lib/string.h>
-#include <memory/pmm.h>
+#include <kernel/kernel.hpp>
+#include <lib/string.hpp>
+#include <memory/pmm.hpp>
 
 static volatile struct limine_framebuffer_request fb_req = {
 	.id = LIMINE_FRAMEBUFFER_REQUEST,

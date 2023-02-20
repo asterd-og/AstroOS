@@ -1,7 +1,7 @@
-#include <video/terminal.h>
-#include <video/framebuffer.h>
+#include <video/terminal.hpp>
+#include <video/framebuffer.hpp>
 #include <kernel/limine.h>
-#include <lib/string.h>
+#include <lib/string.hpp>
 
 namespace Terminal {
     int cx = 32;

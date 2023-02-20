@@ -1,5 +1,5 @@
-#include <sys/pic.h>
-#include <lib/ports.h>
+#include <sys/pic.hpp>
+#include <lib/ports.hpp>
 
 namespace Pic {
 	void init() {

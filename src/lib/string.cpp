@@ -1,5 +1,5 @@
-#include <lib/string.h>
-#include <lib/math.h>
+#include <lib/string.hpp>
+#include <lib/math.hpp>
 
 int strlen(char* src) {
 	int i = 0;

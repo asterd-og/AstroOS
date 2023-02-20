@@ -1,7 +1,7 @@
-#include <sys/ps2/keyboard.h>
-#include <lib/ports.h>
-#include <tables/idt/idt.h>
-#include <sys/ps2/kbMap.h>
+#include <sys/ps2/keyboard.hpp>
+#include <lib/ports.hpp>
+#include <tables/idt/idt.hpp>
+#include <sys/ps2/kbMap.hpp>
 
 namespace Keyboard {
     bool pressed = false;

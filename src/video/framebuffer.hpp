@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <lib/gfx/fonts.h>
+#include <lib/gfx/fonts.hpp>
 
 class Framebuffer {
 	private:

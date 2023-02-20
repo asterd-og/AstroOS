@@ -1,6 +1,6 @@
-#include <tables/idt/idt.h>
+#include <tables/idt/idt.hpp>
 #include <lib/printf.h>
-#include <sys/pic.h>
+#include <sys/pic.hpp>
 
 namespace Idt {
     static const char *messages[32] = {
