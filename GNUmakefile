@@ -45,7 +45,7 @@ override OBJ += $(ASMFILES:.asm=_asm.o)
 
 .PHONY: all
 all: $(ISONAME) run
-	rm -rf iso_root $(OBJ) $(KOUT)
+	rm -rf iso_root $(OBJ) $(KOUT) $(ISONAME)
 
 run:
 	qemu-system-x86_64 -M q35 -m 2G -smp 1 -s -cdrom $(ISONAME) -boot d -no-reboot -no-shutdown --serial stdio

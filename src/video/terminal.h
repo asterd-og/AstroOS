@@ -5,5 +5,5 @@
 
 namespace Terminal {
     void init();
-    void write(char);
+    void write(char*);
 }
