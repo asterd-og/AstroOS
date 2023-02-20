@@ -7,6 +7,7 @@
 #include <lib/string.h>
 #include <sys/pit.h>
 #include <video/framebuffer.h>
+#include <sys/ps2/keyboard.h>
 
 static volatile struct limine_hhdm_request hhdmReq = {
     .id = LIMINE_HHDM_REQUEST,
@@ -21,7 +22,7 @@ extern "C" void _start() {
     hhdmOff = hhdmReq.response->offset;
 
     Pmm::init();
-    Vbe.init(0);
+    Vbe.init();
 
     Terminal::init();
 
@@ -34,6 +35,16 @@ extern "C" void _start() {
     printf("IDT Initialised.\n");
     Pit::init();
     printf("PIT Initialised.\n");
+
+    Keyboard::init();
+
+    char c = 0;
+
+    while (1) {
+        c = Keyboard::getChar();
+        if (c != '\0') printf("%c", c);
+        c = '\0';
+    }
 
     for (;;) {
 		asm("hlt");

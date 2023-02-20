@@ -9,7 +9,7 @@ static volatile struct limine_framebuffer_request fb_req = {
 	.revision = 0
 };
 
-void Framebuffer::init(int framebufferIdx) {
+void Framebuffer::init() {
 	struct limine_framebuffer* fb = fb_req.response->framebuffers[0];
 	
 	this->width = fb->width;

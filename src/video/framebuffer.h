@@ -14,7 +14,7 @@ class Framebuffer {
 		uint32_t* address;
 		uint32_t* backAddress;
 
-		void init(int);
+		void init();
 		void drawPixel(int, int, uint32_t);
 		
 		void drawFillRect(int, int, int, int, uint32_t);
