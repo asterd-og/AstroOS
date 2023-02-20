@@ -26,4 +26,4 @@ static inline bool bit_address_from_byte(uint32_t to_convert, int to_return)
     int mask = 1 << (to_return - 1);
     return ((to_convert & mask) != 0);
 }
-#define kernelFont FONT_SLIM_8x16
+#define kernelFont FONT_SYSTEM_8x16
