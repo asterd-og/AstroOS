@@ -1,7 +1,7 @@
 ISONAME = AskourOS.iso
 CXX := clang++
 
-KOUT = bin/kernel.elf
+KOUT = kernel.elf
 
 LD := ld.lld
 
@@ -78,7 +78,7 @@ kernel: $(OBJ)
 
 initrd:
 	@echo Generating init ramdisk!
-	@tar czf  bin/initrd.img -C bin/fs/ ./ --format=ustar
+#	@tar czf  bin/initrd.img -C bin/fs/ ./ --format=ustar
 
 mkdisk:
 	@dd if=/dev/zero of=disk.img bs=1k count=100000
@@ -89,7 +89,7 @@ $(ISONAME): limine kernel initrd
 	@mkdir -p iso_root
 	@cp $(KOUT) \
 		conf/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso_root/
-	@mv bin/initrd.img iso_root/
+#	@mv bin/initrd.img iso_root/
 	@xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
 		--efi-boot limine-cd-efi.bin \
