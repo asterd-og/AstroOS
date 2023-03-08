@@ -10,6 +10,6 @@
 
 namespace Pmm {
     void  init();
-    void* alloc(size_t);
-    void  free(void*, size_t);
+    void* alloc(size_t size);
+    void  free(void* ptr, size_t size);
 }

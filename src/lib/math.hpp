@@ -2,6 +2,6 @@
 
 #include <stdint.h>
 
-int abs(int);
-unsigned int log2(unsigned int);
-double floor(double);
+int abs(int x);
+unsigned int log2(unsigned int x);
+double floor(double x);

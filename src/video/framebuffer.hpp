@@ -15,14 +15,14 @@ class Framebuffer {
 		uint32_t* backAddress;
 
 		void init();
-		void drawPixel(int, int, uint32_t);
+		void drawPixel(int x, int y, uint32_t color);
 		
-		void drawFillRect(int, int, int, int, uint32_t);
+		void drawFillRect(int x, int y, int w, int h, uint32_t color);
 
-		void drawChar(int, int, char, uint32_t, font_t);
-		void drawString(int, int, char*, uint32_t, font_t);
+		void drawChar(int x, int y, char c, uint32_t color, font_t font);
+		void drawString(int x, int y, char* str, uint32_t color, font_t font);
 
-		void clear(uint32_t);
+		void clear(uint32_t color);
 		void update();
 };
 

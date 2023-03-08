@@ -30,6 +30,9 @@ namespace Terminal {
 		printf(":> ");
 	}
 
+	void eraseCursor() {
+	}
+
 	void update() {
 		c = Keyboard::getChar();
 		if (c != '\0') {

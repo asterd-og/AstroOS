@@ -8,5 +8,5 @@ namespace Terminal {
     void printInput();
     void printWelcome();
     void update();
-    void write(char*);
+    void write(char* str);
 }
