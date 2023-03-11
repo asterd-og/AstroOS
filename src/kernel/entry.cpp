@@ -8,6 +8,9 @@
 #include <sys/pit.hpp>
 #include <video/framebuffer.hpp>
 #include <sys/ps2/keyboard.hpp>
+#include <memory/vmm.hpp>
+#include <memory/pageMap.hpp>
+#include <memory/pageTable.hpp>
 
 static volatile struct limine_hhdm_request hhdmReq = {
     .id = LIMINE_HHDM_REQUEST,
@@ -36,15 +39,7 @@ extern "C" void _start() {
     Idt::init();
     printf("IDT Initialised.\n");
 
-    Pit::init();
-    printf("PIT Initialised.\n");
-
-    Keyboard::init();
-
-    Terminal::printWelcome();
-
     for (;;) {
-        Terminal::update();
-        //asm("hlt");
+        asm("hlt");
 	}
 }

@@ -30,9 +30,6 @@ namespace Terminal {
 		printf(":> ");
 	}
 
-	void eraseCursor() {
-	}
-
 	void update() {
 		c = Keyboard::getChar();
 		if (c != '\0') {
@@ -48,9 +45,11 @@ namespace Terminal {
 					buff[idx] = '\0';
 				}
 			} else {
-				printf("%c", c);
-				buff[idx] = c;
-				idx++;
+				if (c != 0xa) {
+					printf("%c", c);
+					buff[idx] = c;
+					idx++;
+				}
 			}
 		}
 		c = '\0';

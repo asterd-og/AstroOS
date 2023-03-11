@@ -32,8 +32,25 @@ namespace Pmm {
         .revision = 0
     };
 
+    struct limine_memmap_response* memRes;
+
+    uint64_t getMemSize() {
+        static uint64_t size = 0;
+        if (size > 0) return size;
+        for (uint64_t i = 0; i < memRes->entry_count; i++) {
+			/*if (memRes->entries[i]->type == LIMINE_MEMMAP_USABLE ||
+				memRes->entries[i]->type == LIMINE_MEMMAP_BOOTLOADER_RECLAIMABLE) {
+				topAddress = memRes->entries[i]->base + memRes->entries[i]->length;
+				if (topAddress > higherAddress)
+					higherAddress = topAddress;
+			}*/
+            size += memRes->entries[i]->length;
+		}
+
+    }
+
     void init() {
-        struct limine_memmap_response* memRes = memReq.response;
+        memRes = memReq.response;
 
 		for (uint64_t i = 0; i < memRes->entry_count; i++) {
 			if (memRes->entries[i]->type == LIMINE_MEMMAP_USABLE ||

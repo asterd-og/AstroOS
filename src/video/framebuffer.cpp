@@ -19,14 +19,14 @@ void Framebuffer::init() {
 	this->size = this->width * this->height * 4;
 
 	this->address = (uint32_t*)fb->address;
-	this->backAddress = (uint32_t*)Pmm::alloc((this->width * this->height) / pageSize);
+	//this->address = (uint32_t*)Pmm::alloc(250);
 
-	memset(this->backAddress, 0x0, this->size);
+	//memset(this->address, 0x0, this->size);
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->backAddress[y * this->pitch / 4 + x] = color;
+	this->address[y * this->pitch / 4 + x] = color;
 }
 
 void Framebuffer::drawFillRect(int x, int y, int w, int h, uint32_t color) {
@@ -45,9 +45,9 @@ void Framebuffer::drawChar(int x, int y, char c, uint32_t color, font_t font) {
 }
 
 void Framebuffer::clear(uint32_t color) {
-	for (int i = 0; i < this->width * this->height; i++) this->backAddress[i] = color;
+	for (int i = 0; i < this->width * this->height; i++) this->address[i] = color;
 }
 
 void Framebuffer::update() {
-	for (int i = 0; i < this->width * this->height; i++) this->address[i] = this->backAddress[i];
+	for (int i = 0; i < this->width * this->height; i++) this->address[i] = this->address[i];
 }
