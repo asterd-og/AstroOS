@@ -1,3 +1,7 @@
+// PMM Using a stack-based approach
+// No slab allocator, no bitmap allocator, only stack
+// Everything made by astrido
+
 #pragma once
 
 #include <stdint.h>

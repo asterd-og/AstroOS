@@ -2,6 +2,7 @@
 #include <kernel/limine.h>
 #include <kernel/kernel.hpp>
 #include <lib/string.hpp>
+#include <lib/printf.h>
 #include <memory/pmm.hpp>
 
 static volatile struct limine_framebuffer_request fb_req = {
@@ -19,14 +20,14 @@ void Framebuffer::init() {
 	this->size = this->width * this->height * 4;
 
 	this->address = (uint32_t*)fb->address;
-	//this->address = (uint32_t*)Pmm::alloc(250);
+	this->backAddress = (uint32_t*)Pmm::alloc(768);
 
-	//memset(this->address, 0x0, this->size);
+	return;
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->address[y * this->pitch / 4 + x] = color;
+	this->backAddress[y * this->pitch / 4 + x] = color;
 }
 
 void Framebuffer::drawFillRect(int x, int y, int w, int h, uint32_t color) {
@@ -45,9 +46,9 @@ void Framebuffer::drawChar(int x, int y, char c, uint32_t color, font_t font) {
 }
 
 void Framebuffer::clear(uint32_t color) {
-	for (int i = 0; i < this->width * this->height; i++) this->address[i] = color;
+	for (int i = 0; i < this->width * this->height; i++) this->backAddress[i] = color;
 }
 
 void Framebuffer::update() {
-	for (int i = 0; i < this->width * this->height; i++) this->address[i] = this->address[i];
+	for (int i = 0; i < this->width * this->height; i++) this->address[i] = this->backAddress[i];
 }

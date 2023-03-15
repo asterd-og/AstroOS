@@ -1,34 +1,27 @@
+// PMM Using a stack-based approach
+// No slab allocator, no bitmap allocator, only stack
+// Everything made by astrido
+
 #include <memory/pmm.hpp>
 #include <kernel/kernel.hpp>
 #include <lib/string.hpp>
 #include <lib/printf.h>
 
 namespace Pmm {
-    uint8_t* bitmap;
-    size_t bitmapSize;
+    uint64_t* stackAddr = nullptr;
+    uint64_t stackSize = 0;
+    int top = -1;
 
     uint64_t higherAddress = 0;
 	uint64_t topAddress = 0;
 
-    bool inc = false;
-    uint64_t index = 0;
-
-    void setBit(int index) {
-        bitmap[index / 8] |= (1 << (index % 8));
-        // Sets the bit in the index
-    }
-
-    void clearBit(int index) {
-        bitmap[index / 8] &= ~(1 << (index % 8));
-        // This creates a mask, and reverts from 1 to 0
-    }
-
-    bool getBit(int index) {
-        return (bitmap[index / 8] & (1 << (index % 8)));
-    }
-
     static volatile struct limine_memmap_request memReq = {
         .id = LIMINE_MEMMAP_REQUEST,
+        .revision = 0
+    };
+
+    static volatile struct limine_hhdm_request hhdmReq = {
+        .id = LIMINE_HHDM_REQUEST,
         .revision = 0
     };
 
@@ -38,15 +31,24 @@ namespace Pmm {
         static uint64_t size = 0;
         if (size > 0) return size;
         for (uint64_t i = 0; i < memRes->entry_count; i++) {
-			/*if (memRes->entries[i]->type == LIMINE_MEMMAP_USABLE ||
-				memRes->entries[i]->type == LIMINE_MEMMAP_BOOTLOADER_RECLAIMABLE) {
-				topAddress = memRes->entries[i]->base + memRes->entries[i]->length;
-				if (topAddress > higherAddress)
-					higherAddress = topAddress;
-			}*/
             size += memRes->entries[i]->length;
 		}
+        return size;
+    }
 
+    void stackPush(uint64_t val) {
+        if (top + 1 > stackSize) return;
+        top++;
+        stackAddr[top] = val;
+    }
+
+    void stackPop() {
+        if (top <= 0) return;
+        top--;
+    }
+
+    uint64_t stackTop() {
+        return stackAddr[top];
     }
 
     void init() {
@@ -61,14 +63,18 @@ namespace Pmm {
 			}
 		}
 
-		bitmapSize = alignUp((higherAddress / pageSize) / 8, pageSize);
+        for (int i = 0; i < getMemSize(); i += 4096) stackSize++;
 
 		for (uint64_t i = 0; i < memRes->entry_count; i++)
 			if (memRes->entries[i]->type == LIMINE_MEMMAP_USABLE) {
-				if (memRes->entries[i]->length >= bitmapSize) {
-					bitmap = (uint8_t*)(memRes->entries[i]->base + hhdmOff);
-					memset(bitmap, 0xFF, bitmapSize);
-					break;
+				if (memRes->entries[i]->length >= stackSize) {
+                    stackAddr = (uint64_t*)(memRes->entries[i]->base + hhdmReq.response->offset);
+                    memRes->entries[i]->length -= stackSize;
+                    memRes->entries[i]->base += stackSize;
+                    for (int i = 0; i < stackSize; i++) {
+                        stackAddr[i] = 0;
+                    }
+                    break;
 				}
 			}
 
@@ -76,54 +82,18 @@ namespace Pmm {
 			if (memRes->entries[i]->type == LIMINE_MEMMAP_USABLE ||
 				memRes->entries[i]->type == LIMINE_MEMMAP_BOOTLOADER_RECLAIMABLE) {
 				for (uint64_t j = 0; j < memRes->entries[i]->length; j += pageSize) {
-					clearBit((memRes->entries[i]->base + j) / pageSize);
-				}
+                    stackPush(memRes->entries[i]->base + j);
+                }
 			}
     }
 
-    uint64_t findFree(size_t size) {
-        if (inc) {
-            inc = false;
-            return -1;
-        }
-        for (uint64_t i = 0; i < size;) {
-            if (index > bitmapSize) {
-                if (inc == true) {
-                    inc = false;
-                    return -1;
-                } else {
-                    inc = true;
-                    return findFree(size);
-                }
-            } else if (getBit(i + index) == 0) {
-                i++;
-                continue;
-            } else {
-                index++;
-                i = 0;
-                continue;
-            }
-        }
-        return index;
-    }
-
     void* alloc(size_t size) {
-        uint64_t idx = findFree(size);
-        if (idx == -1) {
-            printf("\nPMM Alloc failed:\nNot enough space.\n");
-            return (void*)-1;
-        }
-
-        for (uint64_t i = index; i < index + size; i++)
-            setBit(i);
-        
-        return (void*)((index * pageSize) + bitmap);
+        for (int i = 0; i < size; i++) stackPop();
+        return (void*)stackTop();
     }
 
     void free(void* ptr, size_t size) {
-        uint64_t idx = (uint64_t)ptr / pageSize;
-        for (int i = idx; i < idx + size; i++)
-            clearBit(i);
+        for (int i = 0; i < size; i++) stackPush((uint64_t)ptr + (i * 4096));
         return;
     }
 }

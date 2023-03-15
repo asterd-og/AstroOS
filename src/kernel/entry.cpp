@@ -12,26 +12,10 @@
 #include <memory/pageMap.hpp>
 #include <memory/pageTable.hpp>
 
-static volatile struct limine_hhdm_request hhdmReq = {
-    .id = LIMINE_HHDM_REQUEST,
-    .revision = 0
-};
-
-uint64_t hhdmOff;
-
 Framebuffer Vbe;
 
 extern "C" void _start() {
-    hhdmOff = hhdmReq.response->offset;
-
-    Pmm::init();
-    Vbe.init();
-
-    Terminal::init();
-
-    printf("PMM Initialised.\n");
-    printf("FB Initialised.\n");
-    printf("Terminal Initialised.\n");
+    printf("Astro Kernel Booted.\n\n");
 
     Gdt::init();
     printf("GDT Initialised.\n");
@@ -39,7 +23,16 @@ extern "C" void _start() {
     Idt::init();
     printf("IDT Initialised.\n");
 
+    Pmm::init();
+    printf("PMM Initialised.\n");
+ 
+    Vbe.init();
+    printf("FB Initialised.\n");
+
+    Vbe.clear(0x0);
+    Vbe.drawFillRect(150, 150, 150, 150, 0xFF00FF);
+
     for (;;) {
-        asm("hlt");
+        Vbe.update();
 	}
 }
