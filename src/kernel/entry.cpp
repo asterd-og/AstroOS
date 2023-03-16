@@ -11,11 +11,19 @@
 #include <memory/vmm.hpp>
 #include <memory/pageMap.hpp>
 #include <memory/pageTable.hpp>
+#include <sys/sw/console.hpp>
+#include <sys/serial.hpp>
 
 Framebuffer Vbe;
+Serial io;
 
 extern "C" void _start() {
-    printf("Astro Kernel Booted.\n\n");
+    printf("+--------------------+\n");
+    printf("|Astro Kernel Booted.|\n");
+    printf("+--------------------+\n\n");
+
+    io = Serial();
+    io.print("Serial Initialised.\n");
 
     Gdt::init();
     printf("GDT Initialised.\n");
@@ -25,14 +33,13 @@ extern "C" void _start() {
 
     Pmm::init();
     printf("PMM Initialised.\n");
+
+    Keyboard::init();
+    printf("KB Initialised.\n");
+
+    Console::init();
  
-    Vbe.init();
-    printf("FB Initialised.\n");
-
-    Vbe.clear(0x0);
-    Vbe.drawFillRect(150, 150, 150, 150, 0xFF00FF);
-
     for (;;) {
-        Vbe.update();
+        Console::update();
 	}
 }

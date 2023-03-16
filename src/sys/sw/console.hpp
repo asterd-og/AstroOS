@@ -3,7 +3,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
-namespace Terminal {
+namespace Console {
     void init();
-    void write(char* str);
+    void printInput();
+    void update();
 }

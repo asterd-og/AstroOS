@@ -62,7 +62,7 @@ ovmf-x64:
 uefi: $(ISONAME) run-uefi clean
 
 limine:
-	git clone https://github.com/limine-bootloader/limine.git --branch=v3.0-branch-binary --depth=1
+	git clone https://github.com/limine-bootloader/limine.git --branch=v4.x-branch-binary --depth=1
 	make -C limine
 
 kernel: $(OBJ)
@@ -88,7 +88,7 @@ $(ISONAME): limine kernel initrd
 	@rm -fr iso_root
 	@mkdir -p iso_root
 	@cp $(KOUT) \
-		conf/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso_root/
+		conf/*.F08 conf/*.F16 conf/*.F32 conf/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso_root/
 #	@mv bin/initrd.img iso_root/
 	@xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
