@@ -38,7 +38,7 @@ int Serial::print(char* str, ...) {
     va_list va;
     va_start(va, str);
     char buffer[2048];
-    const int ret = vsnprintf_(buffer, strlen(str), str, va);
+    const int ret = vsnprintf_(buffer, strlen(str)+1, str, va);
     va_end(va);
     for (int i = 0; i < strlen(buffer); i++)
         this->write(buffer[i]);

@@ -12,6 +12,7 @@ namespace Keyboard {
     void handler(Registers* regs) {
         uint8_t key = inb(0x60);
         if (!(key & 0x80)) {
+			// key down
             if (key == 0x2a) {
                 // shift
                 shift = true;

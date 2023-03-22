@@ -22,6 +22,8 @@ class Framebuffer {
 		void drawChar(int x, int y, char c, uint32_t color, font_t font);
 		void drawString(int x, int y, char* str, uint32_t color, font_t font);
 
+		void termEffect();
+
 		void clear(uint32_t color);
 		void update();
 };

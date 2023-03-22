@@ -47,6 +47,7 @@ namespace Idt {
 	typedef void(*handler)(Registers*);
 
 	void init();
-	void setDesc(uint8_t, void*);
-	void installHandler(uint8_t, handler);
+	void setDesc(uint8_t idx, void* isr);
+	void installHandler(uint8_t idx, handler hand);
+	void installSyscalls(handler hand);
 }

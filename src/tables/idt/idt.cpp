@@ -44,6 +44,7 @@ namespace Idt {
     static IdtEntry idt[256];
 
     handler handlers[16];
+    handler syscall;
 
     void init() {
 		__asm__ volatile ("cli");
@@ -53,7 +54,7 @@ namespace Idt {
             .limit = (uint16_t)sizeof(IdtEntry) * 256 - 1
         };
 
-        for (uint8_t idx = 0; idx < 47; idx++)
+        for (uint8_t idx = 0; idx < 255; idx++)
             setDesc(idx, intVector[idx]);
         
         __asm__ volatile("lidt %0" : : "m"(idtr));
@@ -76,6 +77,10 @@ namespace Idt {
     void installHandler(uint8_t idx, handler hand) {
         handlers[idx] = hand;
     }
+    
+    void installSyscalls(handler hand) {
+		syscall = hand;
+	}
 
     extern "C" void intHandler(Registers* regs) {
         if (regs->intNo < 32) {
@@ -95,10 +100,15 @@ namespace Idt {
 
             for (;;) __asm__ volatile("hlt");
         } else {
-            if ((uintptr_t*)handlers[regs->intNo - 32] != nullptr) {
-                handlers[regs->intNo - 32](regs);
-            }
-            Pic::eoi(regs->intNo - 32);
+			if (regs->intNo == 0x80) {
+				syscall(regs);
+				Pic::eoi(regs->intNo - 32);
+			} else {
+				if ((uintptr_t*)handlers[regs->intNo - 32] != nullptr) {
+					handlers[regs->intNo - 32](regs);
+				}
+				Pic::eoi(regs->intNo - 32);
+			}
         }
     }
 }

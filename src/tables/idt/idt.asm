@@ -3,6 +3,7 @@
 
 %macro isrStub 1
 intStub%+%1:
+	push 0
     push %1
     push rax
     push rbx

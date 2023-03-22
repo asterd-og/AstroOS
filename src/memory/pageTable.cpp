@@ -2,9 +2,12 @@
 #include <memory/pageMap.hpp>
 #include <memory/pmm.hpp>
 #include <lib/string.hpp>
+#include <lib/printf.h>
 
-pageTable::pageTable(Vmm::PT* PML4) {
-    this->PML4 = PML4;
+int i = 0;
+
+pageTable::pageTable(Vmm::PT* PML4A) {
+    this->PML4 = PML4A;
 }
 
 void pageTable::mapAddr(void* vaddr, void* paddr) {
@@ -52,6 +55,11 @@ void pageTable::mapAddr(void* vaddr, void* paddr) {
     } else {
         pt = (Vmm::PT*)((uint64_t)pde.addr << 12);
     }
+    
+	i++;
+    
+    if (i >= 56000)
+		printf("> %d\n", i);
 
     pde = pt->entries[idx.P];
     pde.addr = (uint64_t)paddr >> 12;

@@ -50,6 +50,10 @@ namespace Pmm {
     uint64_t stackTop() {
         return stackAddr[top];
     }
+    
+    uint64_t getHhdmOff() {
+		return hhdmReq.response->offset;
+	}
 
     void init() {
         memRes = memReq.response;

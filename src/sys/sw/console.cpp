@@ -7,6 +7,7 @@ namespace Console {
     char buffer[512];
     int idx;
     char c;
+    int count = 0;
 
     void init() {
         printf("\nConsole Initialised.\n");
@@ -14,7 +15,7 @@ namespace Console {
     }
 
     void printInput() {
-        printf(">>> ");
+        printf("%d> ", count);
     }
 
     void update() {
@@ -24,6 +25,7 @@ namespace Console {
                 printf("\n%s\n", buffer);
                 memset(buffer, 0, strlen(buffer));
                 idx = 0;
+                count++;
                 printInput();
             } else if (c == '\b') {
                 if (idx > 0) {

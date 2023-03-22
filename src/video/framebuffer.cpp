@@ -10,6 +10,8 @@ static volatile struct limine_framebuffer_request fb_req = {
 	.revision = 0
 };
 
+uint32_t scHeight = 1;
+
 void Framebuffer::init() {
 	struct limine_framebuffer* fb = fb_req.response->framebuffers[0];
 	
@@ -20,14 +22,14 @@ void Framebuffer::init() {
 	this->size = this->width * this->height * 4;
 
 	this->address = (uint32_t*)fb->address;
-	this->backAddress = (uint32_t*)Pmm::alloc(768);
+	//this->backAddress = (uint32_t*)Pmm::alloc(768);
 
 	return;
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->backAddress[y * this->pitch / 4 + x] = color;
+	this->address[y * this->pitch / 4 + x] = color;
 }
 
 void Framebuffer::drawFillRect(int x, int y, int w, int h, uint32_t color) {
@@ -43,6 +45,17 @@ void Framebuffer::drawChar(int x, int y, char c, uint32_t color, font_t font) {
 		for (size_t _x = 0; _x < font.width; _x++)
 			if (bit_address_from_byte(font.data[p + _y], _x + 1))
 				drawPixel(x + (font.width - _x), y + _y, color);
+}
+
+void Framebuffer::termEffect() {
+	for (int y = 0; y < this->height; y++) {
+		if (y % (scHeight * 3) >= scHeight) {
+			continue; // skip every other row
+		}
+		for (int x = 0; x < this->width; x++) {
+			this->drawPixel(x, y, 0x00000000);
+		}
+	}
 }
 
 void Framebuffer::clear(uint32_t color) {
