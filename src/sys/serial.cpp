@@ -13,7 +13,6 @@ Serial::Serial() {
     outb(port + 3, 0x03);
     outb(port + 2, 0xC7);
     outb(port + 4, 0x0B);
-    printf("Serial Initialised.\n");
 }
 
 int Serial::received() {

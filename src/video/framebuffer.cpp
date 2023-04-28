@@ -22,14 +22,20 @@ void Framebuffer::init() {
 	this->size = this->width * this->height * 4;
 
 	this->address = (uint32_t*)fb->address;
-	//this->backAddress = (uint32_t*)Pmm::alloc(768);
+	//this->backAddress = (uint32_t*)Pmm::alloc((this->width * this->height) / 4096);
+	this->backAddress = (uint32_t*)Pmm::alloc(192);
 
-	return;
+	memset(this->backAddress, 0, this->size);
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->address[y * this->pitch / 4 + x] = color;
+	this->backAddress[y * this->pitch / 4 + x] = color;
+}
+
+uint32_t Framebuffer::getPixel(int x, int y) {
+	if (x > this->width || y > this->height || x < 0 || y < 0) return 0;
+	return this->backAddress[y * this->pitch / 4 + x];
 }
 
 void Framebuffer::drawFillRect(int x, int y, int w, int h, uint32_t color) {
@@ -47,14 +53,9 @@ void Framebuffer::drawChar(int x, int y, char c, uint32_t color, font_t font) {
 				drawPixel(x + (font.width - _x), y + _y, color);
 }
 
-void Framebuffer::termEffect() {
-	for (int y = 0; y < this->height; y++) {
-		if (y % (scHeight * 3) >= scHeight) {
-			continue; // skip every other row
-		}
-		for (int x = 0; x < this->width; x++) {
-			this->drawPixel(x, y, 0x00000000);
-		}
+void Framebuffer::drawString(int x, int y, char* str, uint32_t color, font_t font) {
+	for (int i = 0; i < strlen(str); i++) {
+		drawChar(x+(i * font.width), y, str[i], color, font);
 	}
 }
 

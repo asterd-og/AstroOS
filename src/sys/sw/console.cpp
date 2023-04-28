@@ -2,6 +2,7 @@
 #include <lib/string.hpp>
 #include <sys/ps2/keyboard.hpp>
 #include <lib/printf.h>
+#include <video/framebuffer.hpp>
 
 namespace Console {
     char buffer[512];
@@ -10,7 +11,6 @@ namespace Console {
     int count = 0;
 
     void init() {
-        printf("\nConsole Initialised.\n");
         printInput();
     }
 

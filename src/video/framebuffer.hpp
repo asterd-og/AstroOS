@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <lib/gfx/fonts.hpp>
+#include <lib/gfx/colors.hpp>
 
 class Framebuffer {
 	private:
@@ -15,6 +16,9 @@ class Framebuffer {
 		uint32_t* backAddress;
 
 		void init();
+
+		uint32_t getPixel(int x, int y);
+
 		void drawPixel(int x, int y, uint32_t color);
 		
 		void drawFillRect(int x, int y, int w, int h, uint32_t color);
@@ -22,10 +26,8 @@ class Framebuffer {
 		void drawChar(int x, int y, char c, uint32_t color, font_t font);
 		void drawString(int x, int y, char* str, uint32_t color, font_t font);
 
-		void termEffect();
-
 		void clear(uint32_t color);
 		void update();
 };
 
-extern Framebuffer Vbe;
+extern Framebuffer Gfx;

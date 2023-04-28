@@ -102,13 +102,12 @@ namespace Idt {
         } else {
 			if (regs->intNo == 0x80) {
 				syscall(regs);
-				Pic::eoi(regs->intNo - 32);
 			} else {
 				if ((uintptr_t*)handlers[regs->intNo - 32] != nullptr) {
 					handlers[regs->intNo - 32](regs);
 				}
-				Pic::eoi(regs->intNo - 32);
 			}
+            Pic::eoi(regs->intNo - 32);
         }
     }
 }

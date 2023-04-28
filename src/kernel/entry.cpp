@@ -8,62 +8,53 @@
 #include <sys/pit.hpp>
 #include <video/framebuffer.hpp>
 #include <sys/ps2/keyboard.hpp>
-#include <memory/vmm.hpp>
-#include <memory/pageMap.hpp>
-#include <memory/pageTable.hpp>
 #include <sys/sw/console.hpp>
 #include <sys/serial.hpp>
-#include <sys/exec/syscalls.hpp>
-#include <sys/exec/elf.hpp>
-#include <sys/exec/com.hpp>
+#include <sys/ps2/mouse.hpp>
+#include <desktop/cursor.hpp>
+#include <desktop/window.hpp>
 
-Framebuffer Vbe;
+static volatile struct limine_hhdm_request hhdmReq = {
+    .id = LIMINE_HHDM_REQUEST,
+    .revision = 0
+};
+
+uint64_t hhdmOff;
+
+Framebuffer Gfx;
 Serial io;
 
 extern "C" void _start() {
-    printf("+----------------------+\n");
-    printf("| Astro Kernel Booted. |\n");
-    printf("+----------------------+\n\n");
+    hhdmOff = hhdmReq.response->offset;
 
+    Pmm::init();
+    Gfx.init();
+    
     io = Serial();
     io.print("Serial Initialised.\n");
 
+    io.print("PMM Initialised.\n");
+    io.print("FB Initialised.\n");
+
     Gdt::init();
-    printf("GDT Initialised.\n");
+    io.print("GDT Initialised.\n");
     
-    Pmm::init();
-    printf("PMM Initialised.\n");
-
-	Vmm::init();
-    printf("VMM Initialised.\n");
-
     Idt::init();
-    printf("IDT Initialised.\n");
-    
-    printf("HHDM Off: %ld | 0x%lx.\n", Pmm::getHhdmOff(), Pmm::getHhdmOff());
-    
-    Vbe.init();
-    printf("FB Initialised.\n");
-    
-    static volatile struct limine_module_request modReq = {
-		.id = LIMINE_MODULE_REQUEST,
-		.revision = 0
-	};
-	
-	struct limine_module_response* modRes = modReq.response;
-	
-	printf("Module 0 (PRG) addr: 0x%lx size: 0x%lx\n", (uint64_t)modRes->modules[0]->address + Pmm::getHhdmOff(), modRes->modules[0]->size);
+    io.print("IDT Initialised.\n");
 
-	Syscalls::init();
-	printf("Syscalls Initialised.\n");
+    Mouse::init();
+    io.print("Mouse initialised.\n");
 
     Keyboard::init();
-    printf("KB Initialised.\n");
+    io.print("Keyboard Initialised.\n");
 
-    Console::init();
- 
+    Window win = Window("hey", 400, 400, 10, 30);
+    
     for (;;) {
-        Console::update();
-		//Vbe.termEffect();
-	}
+        Gfx.clear(0xFFFFFFFF);
+        win.update();
+        win.draw();
+        Cursor::draw();
+        Gfx.update();
+    }
 }

@@ -21,3 +21,10 @@ double floor(double x) {
 	if (d == x || x >= 0) return d;
 	return d - 1;
 }
+
+int clamp(int x, int y, int z) {
+	if (y > z) return 0;
+	if (x < y) return 0;
+	else if (x > z) return z;
+	return x;
+}
