@@ -3,7 +3,8 @@
 #include <kernel/kernel.hpp>
 #include <lib/string.hpp>
 #include <lib/printf.h>
-#include <memory/pmm.hpp>
+#include <memory/heap.hpp>
+#include <sys/serial.hpp>
 
 static volatile struct limine_framebuffer_request fb_req = {
 	.id = LIMINE_FRAMEBUFFER_REQUEST,
@@ -22,10 +23,14 @@ void Framebuffer::init() {
 	this->size = this->width * this->height * 4;
 
 	this->address = (uint32_t*)fb->address;
-	//this->backAddress = (uint32_t*)Pmm::alloc((this->width * this->height) / 4096);
-	this->backAddress = (uint32_t*)Pmm::alloc(192);
+	this->backAddress = (uint32_t*)Heap::alloc(this->width * this->height);
 
 	memset(this->backAddress, 0, this->size);
+}
+
+uint32_t Framebuffer::getPixel(int x, int y) {
+	if (x > this->width || y > this->height || x < 0 || y < 0) return 0;
+	return this->backAddress[y * this->pitch / 4 + x];
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
@@ -33,9 +38,16 @@ void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	this->backAddress[y * this->pitch / 4 + x] = color;
 }
 
-uint32_t Framebuffer::getPixel(int x, int y) {
-	if (x > this->width || y > this->height || x < 0 || y < 0) return 0;
-	return this->backAddress[y * this->pitch / 4 + x];
+void Framebuffer::drawAlphaPixel(int x, int y, uint32_t color) {
+	if (x > this->width || y > this->height || x < 0 || y < 0) return;
+	this->backAddress[y * this->pitch / 4 + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
+}
+
+uint32_t Framebuffer::alphaBlend(uint32_t c1, uint32_t c2, uint8_t alpha) {
+	this->rgb.r = ((c1 & 0xFF) * alpha + (c2 & 0xFF) * (255 - alpha)) / 255;
+    this->rgb.g = (((c1 >> 8) & 0xFF) * alpha + ((c2 >> 8) & 0xFF) * (255 - alpha)) / 255;
+    this->rgb.b = (((c1 >> 16) & 0xFF) * alpha + ((c2 >> 16) & 0xFF) * (255 - alpha)) / 255;
+    return colorPackRgb(this->rgb);
 }
 
 void Framebuffer::drawFillRect(int x, int y, int w, int h, uint32_t color) {
