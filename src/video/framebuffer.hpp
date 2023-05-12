@@ -24,8 +24,10 @@ class Framebuffer {
 		int bpp;
 		int pitch;
 		int size;
-		uint32_t* address;
-		uint32_t* backAddress;
+		uint32_t* frontBuffer;
+		uint32_t* middleBuffer;
+		uint32_t* backBuffer;
+		bool frontDrawn;
 		rgb rgb;
 
 		void init();

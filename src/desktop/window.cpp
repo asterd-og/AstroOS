@@ -39,7 +39,7 @@ void Window::draw() {
     Gfx.drawFillRect(this->x, this->y - 16, this->w, 16,
                      BLACK);
     Gfx.drawFillRect(this->x, this->y, this->w,
-                     this->h, 0xFFFF00FF);
+                     this->h, 0xFF000000);
     Gfx.drawString(this->x + 4, this->y - 16, this->name,
-                   0xFFFEFEFE, FONT_SLIM_8x16);
+                   0xFFFEFEFE, FONT_HARIBOTE);
 }

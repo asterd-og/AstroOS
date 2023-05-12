@@ -57,7 +57,7 @@ extern "C" void _start() {
     Keyboard::init();
     io.print("Keyboard Initialised.\n");
 
-    Window win = Window("hey", 400, 400, 10, 30);
+    Window win = Window("Terminal", 400, 400, 10, 30);
     
     for (;;) {
         Gfx.clear(0xFF191919);

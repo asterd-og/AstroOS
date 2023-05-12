@@ -22,25 +22,30 @@ void Framebuffer::init() {
 	this->bpp = fb->bpp;
 	this->size = this->width * this->height * 4;
 
-	this->address = (uint32_t*)fb->address;
-	this->backAddress = (uint32_t*)Heap::alloc(this->width * this->height);
+	this->frontBuffer = (uint32_t*)fb->address;
+	this->middleBuffer = (uint32_t*)Heap::alloc(this->size);
+	this->backBuffer = (uint32_t*)Heap::alloc(this->size);
 
-	memset(this->backAddress, 0, this->size);
+	this->frontDrawn = false;
+
+	memset(this->frontBuffer, 0, this->size);
+	memset(this->middleBuffer, 0, this->size);
+	memset(this->backBuffer, 0, this->size);
 }
 
 uint32_t Framebuffer::getPixel(int x, int y) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return 0;
-	return this->backAddress[y * this->pitch / 4 + x];
+	return this->middleBuffer[y * this->pitch / 4 + x];
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->backAddress[y * this->pitch / 4 + x] = color;
+	this->middleBuffer[y * this->pitch / 4 + x] = color;
 }
 
 void Framebuffer::drawAlphaPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->backAddress[y * this->pitch / 4 + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
+	this->middleBuffer[y * this->pitch / 4 + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
 }
 
 uint32_t Framebuffer::alphaBlend(uint32_t c1, uint32_t c2, uint8_t alpha) {
@@ -72,9 +77,15 @@ void Framebuffer::drawString(int x, int y, char* str, uint32_t color, font_t fon
 }
 
 void Framebuffer::clear(uint32_t color) {
-	for (int i = 0; i < this->width * this->height; i++) this->backAddress[i] = color;
+	for (int i = 0; i < this->size; i++) if(this->backBuffer[i] != color) this->middleBuffer[i] = color;
 }
 
 void Framebuffer::update() {
-	for (int i = 0; i < this->width * this->height; i++) this->address[i] = this->backAddress[i];
+	for (int i = 0; i < this->size; i++) {
+		if (middleBuffer[i] != backBuffer[i])
+			frontBuffer[i] = middleBuffer[i];
+	}
+	for (int i = 0; i < this->size; i++) this->backBuffer[i] = this->middleBuffer[i];
 }
+
+// TODO: SET A RECT AREA FOR EVERY UPDATED AREA.

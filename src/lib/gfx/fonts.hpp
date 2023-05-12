@@ -21,6 +21,7 @@ static const font_t FONT_SYSTEM_8x8  = { 8, 8,  0, 0, FONTDATA_SYSTEM_8x8 };
 static const font_t FONT_SYSTEM_8x16 = { 8, 16, 0, 0, FONTDATA_SYSTEM_8x16 };
 static const font_t FONT_SLIM_8x8    = { 8, 8,  1, 0, FONTDATA_SLIM_8x8 };
 static const font_t FONT_SLIM_8x16   = { 8, 16, 0, 0, FONTDATA_SLIM_8x16 };
+static const font_t FONT_HARIBOTE    = { 8, 16, 0, 0, font };
 static inline bool bit_address_from_byte(uint32_t to_convert, int to_return)
 {
     int mask = 1 << (to_return - 1);
