@@ -6,46 +6,33 @@
 #include <memory/heap.hpp>
 #include <sys/serial.hpp>
 
-static volatile struct limine_framebuffer_request fb_req = {
-	.id = LIMINE_FRAMEBUFFER_REQUEST,
-	.revision = 0
-};
+void Framebuffer::create(int width, int height,
+				  	     int bpp, int pitch,
+				         uint32_t* backBufferAddr) {
+	this->width = width;
+	this->height = height;
+	this->pitch = pitch;
+	this->bpp = bpp;
+	this->size = size;
+	this->backBuffer = backBufferAddr;
+	this->dirty = true;
 
-uint32_t scHeight = 1;
-
-void Framebuffer::init() {
-	struct limine_framebuffer* fb = fb_req.response->framebuffers[0];
-	
-	this->width = fb->width;
-	this->height = fb->height;
-	this->pitch = fb->pitch;
-	this->bpp = fb->bpp;
-	this->size = this->width * this->height * 4;
-
-	this->frontBuffer = (uint32_t*)fb->address;
-	this->middleBuffer = (uint32_t*)Heap::alloc(this->size);
-	this->backBuffer = (uint32_t*)Heap::alloc(this->size);
-
-	this->frontDrawn = false;
-
-	memset(this->frontBuffer, 0, this->size);
-	memset(this->middleBuffer, 0, this->size);
 	memset(this->backBuffer, 0, this->size);
 }
 
 uint32_t Framebuffer::getPixel(int x, int y) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return 0;
-	return this->middleBuffer[y * this->pitch / 4 + x];
+	return this->backBuffer[y * this->pitch / 4 + x];
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->middleBuffer[y * this->pitch / 4 + x] = color;
+	this->backBuffer[y * this->pitch / 4 + x] = color;
 }
 
 void Framebuffer::drawAlphaPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->middleBuffer[y * this->pitch / 4 + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
+	this->backBuffer[y * this->pitch / 4 + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
 }
 
 uint32_t Framebuffer::alphaBlend(uint32_t c1, uint32_t c2, uint8_t alpha) {
@@ -72,20 +59,10 @@ void Framebuffer::drawChar(int x, int y, char c, uint32_t color, font_t font) {
 
 void Framebuffer::drawString(int x, int y, char* str, uint32_t color, font_t font) {
 	for (int i = 0; i < strlen(str); i++) {
-		drawChar(x+(i * font.width), y, str[i], color, font);
+		drawChar(x + (i * font.width), y, str[i], color, font);
 	}
 }
 
 void Framebuffer::clear(uint32_t color) {
-	for (int i = 0; i < this->size; i++) if(this->backBuffer[i] != color) this->middleBuffer[i] = color;
+	for (int i = 0; i < this->width * this->height; i++) this->backBuffer[i] = color;
 }
-
-void Framebuffer::update() {
-	for (int i = 0; i < this->size; i++) {
-		if (middleBuffer[i] != backBuffer[i])
-			frontBuffer[i] = middleBuffer[i];
-	}
-	for (int i = 0; i < this->size; i++) this->backBuffer[i] = this->middleBuffer[i];
-}
-
-// TODO: SET A RECT AREA FOR EVERY UPDATED AREA.

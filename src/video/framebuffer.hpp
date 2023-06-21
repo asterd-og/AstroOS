@@ -24,13 +24,13 @@ class Framebuffer {
 		int bpp;
 		int pitch;
 		int size;
-		uint32_t* frontBuffer;
-		uint32_t* middleBuffer;
 		uint32_t* backBuffer;
-		bool frontDrawn;
 		rgb rgb;
+		bool dirty;
 
-		void init();
+		void create(int width, int height,
+				    int bpp, int pitch,
+				    uint32_t* backBufferAddr);
 
 		uint32_t getPixel(int x, int y);
 
@@ -45,7 +45,4 @@ class Framebuffer {
 		void drawString(int x, int y, char* str, uint32_t color, font_t font);
 
 		void clear(uint32_t color);
-		void update();
 };
-
-extern Framebuffer Gfx;

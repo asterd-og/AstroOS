@@ -6,6 +6,7 @@
 #include <lib/string.hpp>
 #include <sys/pit.hpp>
 #include <video/framebuffer.hpp>
+#include <video/vbe.hpp>
 #include <sys/ps2/keyboard.hpp>
 #include <sys/sw/console.hpp>
 #include <sys/serial.hpp>
@@ -28,7 +29,7 @@ struct limine_memmap_response* memRes;
 
 uint64_t hhdmOff;
 
-Framebuffer Gfx;
+Vbe Gfx;
 Serial io;
 
 extern "C" void _start() {

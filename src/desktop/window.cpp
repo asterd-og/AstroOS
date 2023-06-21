@@ -1,5 +1,5 @@
 #include <desktop/window.hpp>
-#include <video/framebuffer.hpp>
+#include <video/vbe.hpp>
 #include <sys/ps2/mouse.hpp>
 #include <lib/math.hpp>
 #include <sys/serial.hpp>

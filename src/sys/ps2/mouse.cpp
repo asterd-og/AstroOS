@@ -1,5 +1,5 @@
 #include <sys/ps2/mouse.hpp>
-#include <video/framebuffer.hpp>
+#include <video/vbe.hpp>
 #include <lib/ports.hpp>
 #include <sys/serial.hpp>
 #include <sys/pic.hpp>

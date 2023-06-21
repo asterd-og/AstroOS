@@ -1,5 +1,5 @@
 #include <desktop/cursor.hpp>
-#include <video/framebuffer.hpp>
+#include <video/vbe.hpp>
 #include <sys/ps2/mouse.hpp>
 
 namespace Cursor {

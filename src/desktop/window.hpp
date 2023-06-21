@@ -13,6 +13,7 @@ class Window {
         int offX;
         int offY;
         bool moving;
+        int properties;
 
         Window(char* name, int w, int h, int x, int y);
         void update();
