@@ -19,7 +19,7 @@ After booting, users can begin using AstroOS through the command-line interface.
 AstroOS does not have any official documentation, support, or community forum at this time. However, later on, i will add documentation.
 
 ## Images
-![Gruvbox Theme](image.png)
+![image](https://github.com/asterd-og/AstroOS/assets/73673156/2c5d3043-b1f0-4782-a50d-897e5a47be90)
 
 ## License
 AstroOS is released under the [MIT](https://choosealicense.com/licenses/mit/) License. This means that it is free to use, modify, and distribute, subject to the terms of the license.
