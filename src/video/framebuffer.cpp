@@ -14,25 +14,25 @@ void Framebuffer::create(int width, int height,
 	this->pitch = pitch;
 	this->bpp = bpp;
 	this->size = size;
+
 	this->backBuffer = backBufferAddr;
-	this->dirty = true;
 
 	memset(this->backBuffer, 0, this->size);
 }
 
 uint32_t Framebuffer::getPixel(int x, int y) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return 0;
-	return this->backBuffer[y * this->pitch / 4 + x];
+	return this->backBuffer[y * width + x];
 }
 
 void Framebuffer::drawPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->backBuffer[y * this->pitch / 4 + x] = color;
+	this->backBuffer[y * width + x] = color;
 }
 
 void Framebuffer::drawAlphaPixel(int x, int y, uint32_t color) {
 	if (x > this->width || y > this->height || x < 0 || y < 0) return;
-	this->backBuffer[y * this->pitch / 4 + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
+	this->backBuffer[y * width + x] = alphaBlend(color, this->getPixel(x, y), (color >> 24));
 }
 
 uint32_t Framebuffer::alphaBlend(uint32_t c1, uint32_t c2, uint8_t alpha) {
@@ -46,6 +46,11 @@ void Framebuffer::drawFillRect(int x, int y, int w, int h, uint32_t color) {
 	for (int i = x; i < x + w; i++)
 		for (int j = y; j < y + h; j++)
 			drawPixel(i, j, color);
+}
+void Framebuffer::drawFillAlphaRect(int x, int y, int w, int h, uint32_t color) {
+	for (int i = x; i < x + w; i++)
+		for (int j = y; j < y + h; j++)
+			drawAlphaPixel(i, j, color);
 }
 
 void Framebuffer::drawChar(int x, int y, char c, uint32_t color, font_t font) {
@@ -66,3 +71,6 @@ void Framebuffer::drawString(int x, int y, char* str, uint32_t color, font_t fon
 void Framebuffer::clear(uint32_t color) {
 	for (int i = 0; i < this->width * this->height; i++) this->backBuffer[i] = color;
 }
+
+int Framebuffer::getBpp() { return this->bpp; }
+int Framebuffer::getPitch() { return this->pitch; }

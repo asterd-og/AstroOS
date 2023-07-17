@@ -28,3 +28,8 @@ int clamp(int x, int y, int z) {
 	else if (x > z) return z;
 	return x;
 }
+
+unsigned int roundTo(unsigned int value, unsigned int roundTo)
+{
+    return (value + (roundTo - 1)) & ~(roundTo - 1);
+}

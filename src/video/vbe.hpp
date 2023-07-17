@@ -9,6 +9,7 @@ class Vbe : public Framebuffer {
         uint32_t* frontBuffer;
     public:
         void init();
+        void drawGc(int x, int y, Framebuffer gc);
         void update();
 };
 

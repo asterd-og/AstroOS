@@ -7,4 +7,5 @@ namespace Console {
     void init();
     void printInput();
     void update();
+    void winUpdate();
 }

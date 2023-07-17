@@ -12,20 +12,14 @@
 #include <sys/serial.hpp>
 #include <sys/ps2/mouse.hpp>
 #include <desktop/cursor.hpp>
-#include <desktop/window.hpp>
 #include <memory/heap.hpp>
+#include <memory/pmm.hpp>
+#include <desktop/window.hpp>
 
 static volatile struct limine_hhdm_request hhdmReq = {
     .id = LIMINE_HHDM_REQUEST,
     .revision = 0
 };
-
-volatile struct limine_memmap_request memReq = {
-    .id = LIMINE_MEMMAP_REQUEST,
-    .revision = 0
-};
-
-struct limine_memmap_response* memRes;
 
 uint64_t hhdmOff;
 
@@ -34,11 +28,12 @@ Serial io;
 
 extern "C" void _start() {
     hhdmOff = hhdmReq.response->offset;
-    
-    memRes = memReq.response;
 
     io = Serial();
     io.print("Serial Initialised.\n");
+
+    Pmm::init();
+    io.print("Pmm Initialised.\n");
 
     Heap::init();
     io.print("Heap Initialised.\n");
@@ -58,12 +53,16 @@ extern "C" void _start() {
     Keyboard::init();
     io.print("Keyboard Initialised.\n");
 
-    Window win = Window("Terminal", 400, 400, 10, 30);
-    
+    Console::init();
+    io.print("Console Initialised.\n");
+
+    //Window win("Console", 400, 200, 10, 30);
+
     for (;;) {
-        Gfx.clear(0xFF191919);
-        win.update();
-        win.draw();
+        Gfx.clear(black);
+        Gfx.drawString(5, 5, "AstroOS build ? 7/16/2023 1:48 AM.", cyan);
+        Console::update();
+        Console::winUpdate();
         Cursor::draw();
         Gfx.update();
     }

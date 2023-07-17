@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <video/framebuffer.hpp>
 
 class Window {
     public:
@@ -14,8 +15,11 @@ class Window {
         int offY;
         bool moving;
         int properties;
+        uint32_t* buffer;
 
-        Window(char* name, int w, int h, int x, int y);
+        Framebuffer gc; // Graphics context
+
+        void create(char* name, int w, int h, int x, int y);
         void update();
         void draw();
 };
