@@ -32,8 +32,10 @@ void Window::update() {
     }
 
     if (this->moving) {
-        this->x = (clamp(Mouse::x() - this->offX, 0 , Gfx.width) / 8) * 8;
-        this->y = (clamp(Mouse::y() - this->offY, 8, Gfx.height) / 8) * 8;
+        this->x = roundTo(clamp(Mouse::x() - this->offX, 0 , Gfx.width), 8);
+        this->y = roundTo(clamp(Mouse::y() - this->offY, 8, Gfx.height), 8);
+        // this->x = (clamp(Mouse::x() - this->offX, 0 , Gfx.width) / 8) * 8;
+        // this->y = (clamp(Mouse::y() - this->offY, 8, Gfx.height) / 8) * 8;
     }
 }
 

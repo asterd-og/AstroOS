@@ -56,11 +56,8 @@ extern "C" void _start() {
     Console::init();
     io.print("Console Initialised.\n");
 
-    //Window win("Console", 400, 200, 10, 30);
-
     for (;;) {
         Gfx.clear(black);
-        Gfx.drawString(5, 5, "AstroOS build ? 7/16/2023 1:48 AM.", cyan);
         Console::update();
         Console::winUpdate();
         Cursor::draw();

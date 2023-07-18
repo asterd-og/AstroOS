@@ -55,12 +55,20 @@ namespace Mouse {
 
     void handle(int8_t x1, int8_t y1) {
         _x += x1;
-        _y += y1;
+        _y -= y1;
 
-        if (_x <= 0) _x = 0;
-        if (_y <= 0) _y = 0;
-        if (_x >= Gfx.width) _x = Gfx.width;
-        if (_y >= Gfx.height) _y = Gfx.height;
+        if (_x < 0) _x = 0;
+        if (_y < 0) _y = 0;
+        if (_x > Gfx.width) _x = Gfx.width;
+        if (_y > Gfx.height) _y = Gfx.height;
+
+        /*_x = _x + x1;
+        _y = _y - y1;
+
+        if (_x < 0) _x = 0;
+        if (_y < 0) _y = 0;
+        if (_x > Gfx.width - 1) _x = Gfx.width - 1;
+        if (_y > Gfx.height - 1) _y = Gfx.height - 1;*/
     }
 
     void update(Registers* regs) {
@@ -84,7 +92,9 @@ namespace Mouse {
                 waitRead();
                 bytes[2] = read();
 
-                handle(bytes[1], -bytes[2]);
+                if (bytes[0] & 0x80 || bytes[0] & 0x40) return;
+
+                handle(bytes[1], bytes[2]);
 
                 _left = (bool)(bytes[0] & 0b00000001);
                 _right = (bool)((bytes[0] & 0b00000010) >> 1);
