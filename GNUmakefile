@@ -48,8 +48,7 @@ all: $(ISONAME) run
 	rm -rf iso_root $(OBJ) $(KOUT) $(ISONAME)
 
 run:
-	cp AstroOS.iso /mnt/c/Users/Administrator/AstroOS.iso
-	cmd.exe /c qemu-system-x86_64 -M q35 -m 2G -smp 1 -s -cdrom C:/Users/Administrator/AstroOS.iso -boot d -no-reboot -no-shutdown --serial stdio
+	qemu-system-x86_64 -M q35 -m 2G -smp 1 -s -cdrom $(ISONAME) -boot d -no-reboot -no-shutdown --serial stdio
 
 run-uefi: ovmf-x64
 	qemu-system-x86_64 -M q35 -m 2G -bios /usr/share/ovmf/OVMF.fd -cdrom $(ISONAME) -boot d --enable-kvm --serial stdio

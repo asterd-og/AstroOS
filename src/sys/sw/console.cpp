@@ -36,27 +36,17 @@ namespace Console {
         }
     }
 
-    void printfgc(char* str, ...) {
-        va_list va;
-        va_start(va, str);
-        char buffer[2048];
-        const int ret = vsnprintf_(buffer, strlen(str)+1, str, va);
-        va_end(va);
-        for (int i = 0; i < strlen(buffer); i++)
-            printc(buffer[i]);
-    }
-
     void print(char* str) {
         for (int i = 0; i < strlen(str); i++)
             printc(str[i]);
     }
 
     void cursorErase() {
-        win.gc.drawFillRect(cx, cy, 8, 8, bg);
+        win.gc.drawFillRect(cx, cy + 6, 8, 2, bg);
     }
 
     void cursorDraw() {
-        win.gc.drawFillRect(cx, cy, 8, 8, red);
+        win.gc.drawFillRect(cx, cy + 6, 8, 2, WHITE);
     }
 
     void init() {
