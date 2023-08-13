@@ -12,5 +12,7 @@ extern uint64_t hhdmOff;
 extern volatile struct limine_memmap_request memReq;
 extern struct limine_memmap_response* memRes;
 
+limine_file* findModule(int pos);
+
 void kmain();
 void kloop();

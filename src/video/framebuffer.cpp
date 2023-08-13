@@ -68,6 +68,12 @@ void Framebuffer::drawString(int x, int y, char* str, uint32_t color, font_t fon
 	}
 }
 
+void Framebuffer::drawTga(int x, int y, Tga* tga) {
+	for (int i = 0; i < tga->width; i++)
+		for (int j = 0; j < tga->height; j++)
+			this->drawPixel(x + i, y + j, tga->data[j * tga->width + i]);
+}
+
 void Framebuffer::clear(uint32_t color) {
 	for (int i = 0; i < this->width * this->height; i++) this->backBuffer[i] = color;
 }

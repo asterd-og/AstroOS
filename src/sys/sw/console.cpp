@@ -4,6 +4,8 @@
 #include <lib/printf.h>
 #include <video/framebuffer.hpp>
 #include <desktop/window.hpp>
+#include <desktop/tga.hpp>
+#include <kernel/kernel.hpp>
 
 namespace Console {
     char buffer[512];
@@ -16,8 +18,10 @@ namespace Console {
     int cx = 0;
     int cy = 0;
 
-    int fg = cyan;
-    int bg = black;
+    int fg = WHITE;
+    int bg = 0xA0000000;
+
+    Tga* astro;
 
     void printc(char c) {
         if (c == '\n') {
@@ -50,7 +54,9 @@ namespace Console {
     }
 
     void init() {
-        win.create("Console", 400, 200, 10, 30);
+        win.create("Console", 640, 480, 0, 0, true, true);
+        win.gc.clear(bg);
+        astro = tgaLoad((unsigned char*)findModule(1)->address, findModule(1)->size);
         printInput();
         cursorDraw();
     }
@@ -59,14 +65,26 @@ namespace Console {
         print("> ");
     }
 
+    void about() {
+        win.gc.drawTga(cx, cy, astro);
+        cx += 186;
+        print("AstroOS is a 64 bit Operating System made by Astrido");
+        cy += 186;
+        cx = 0;
+        print("\n");
+    }
+
     void update() {
         c = Keyboard::getChar();
         if (c != '\0') {
             cursorErase();
             if (c == '\n') {
                 print("\n");
-                print(buffer);
-                print("\n");
+                if (!strcmp(buffer, "about")) about(); // TODO: hardcoded for now it's 3 am, I will make a cmd handler later.
+                else {
+                    print(buffer);
+                    print("\n");
+                }
                 memset(buffer, 0, strlen(buffer));
                 idx = 0;
                 count++;

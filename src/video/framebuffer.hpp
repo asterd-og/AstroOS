@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <lib/gfx/fonts.hpp>
 #include <lib/gfx/colors.hpp>
+#include <desktop/tga.hpp>
 
 #define getTransparency(tLevel) 100-tLevel
 
@@ -65,6 +66,8 @@ class Framebuffer {
 
 		void drawChar(int x, int y, char c, uint32_t color, font_t font = kernelFont);
 		void drawString(int x, int y, char* str, uint32_t color, font_t font = kernelFont);
+
+		void drawTga(int x, int y, Tga* tga);
 
 		void clear(uint32_t color);
 

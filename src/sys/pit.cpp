@@ -4,10 +4,8 @@
 #include <lib/printf.h>
 
 namespace Pit {
-    uint64_t pitCounter;
-
 	void handler(Registers* regs) {
-		pitCounter++;
+		//pitCounter++;
 	}
 
 	void init() {

@@ -88,7 +88,7 @@ $(ISONAME): limine kernel initrd
 	@rm -fr iso_root
 	@mkdir -p iso_root
 	@cp $(KOUT) \
-		conf/limine.cfg limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso_root/
+		conf/limine.cfg conf/bin/*.tga limine/limine.sys limine/limine-cd.bin limine/limine-cd-efi.bin iso_root/
 	@xorriso -as mkisofs -b limine-cd.bin \
 		-no-emul-boot -boot-load-size 4 -boot-info-table \
 		--efi-boot limine-cd-efi.bin \

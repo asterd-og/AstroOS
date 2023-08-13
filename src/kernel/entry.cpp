@@ -15,9 +15,15 @@
 #include <memory/heap.hpp>
 #include <memory/pmm.hpp>
 #include <desktop/window.hpp>
+#include <desktop/tga.hpp>
 
 static volatile struct limine_hhdm_request hhdmReq = {
     .id = LIMINE_HHDM_REQUEST,
+    .revision = 0
+};
+
+static volatile struct limine_module_request modReq = {
+    .id = LIMINE_MODULE_REQUEST,
     .revision = 0
 };
 
@@ -25,6 +31,10 @@ uint64_t hhdmOff;
 
 Vbe Gfx;
 Serial io;
+
+limine_file* findModule(int pos) {
+    return modReq.response->modules[pos];
+}
 
 extern "C" void _start() {
     hhdmOff = hhdmReq.response->offset;
@@ -47,6 +57,9 @@ extern "C" void _start() {
     Idt::init();
     io.print("IDT Initialised.\n");
 
+    Pit::init();
+    io.print("Pit Initialised.\n");
+
     Mouse::init();
     io.print("Mouse initialised.\n");
 
@@ -56,8 +69,10 @@ extern "C" void _start() {
     Console::init();
     io.print("Console Initialised.\n");
 
+    Tga* bg = tgaLoad((unsigned char*)findModule(0)->address, findModule(0)->size);
+
     for (;;) {
-        Gfx.clear(black);
+        Gfx.drawTga(0, 0, bg);
         Console::update();
         Console::winUpdate();
         Cursor::draw();
